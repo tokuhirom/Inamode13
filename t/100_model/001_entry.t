@@ -36,5 +36,12 @@ my $history = $c->model('DB')->single(entry_history => {
 });
 is $history->body, "hello, john\nokay\n- why\n", 'inserted history';
 is $history->revision, 1;
+is $c->model('DB')->count('entry_history' => entry_id => {entry_id => $entry->entry_id}), 1;
+
+# do not change revision if body was not changed
+$entry->update({ body => "okay\nfoo\nbar" });
+is $c->model('DB')->count('entry_history' => entry_id => {entry_id => $entry->entry_id}), 1;
+$entry = $c->model('DB')->single(entry => {entry_id => $entry->entry_id});
+is $entry->revision, 2;
 
 done_testing;

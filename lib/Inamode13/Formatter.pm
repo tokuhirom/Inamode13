@@ -21,18 +21,30 @@ sub parse {
     my $mode = MODE_NORMAL;
     my $li_level = 0;
     for my $line (split /\n/, $src) {
-        if ($mode == MODE_NORMAL && $line =~ qr{^(-+)\s*(.+)$}) {
+        if (($mode == MODE_NORMAL || $mode == MODE_P || $mode == MODE_LI) && $line =~ qr{^(-+)\s*(.+)$}) {
+            if ($mode == MODE_P) {
+                $res .= "</p>\n";
+            }
             if (length($1) > $li_level) {
-                $res .= "<li><ul>" x (length($1)-$li_level);
+                if ($li_level == 0) {
+                    $res .= "<ul>\n";
+                    $li_level++;
+                }
+                $res .= "<li><ul>\n" x (length($1)-$li_level);
             } elsif (length($1) < $li_level) {
                 $res .= "</ul></li>" x ($li_level-length($1));
             }
             $li_level = length($1);
-            $res .= sprintf "<li>%s</li>", escape_html($2);
+            $res .= sprintf "<li>%s</li>\n", escape_html($2);
+            $mode = MODE_LI;
         } else {
             if ($li_level > 0) {
-                $res .= "</ul></li>" x $li_level;
+                if ($li_level > 1) {
+                    $res .= "</ul></li>\n" x ($li_level-1);
+                }
+                $res .= "</ul>\n";
                 $li_level = 0;
+                $mode = MODE_NORMAL;
             }
             given ([$mode, $line]) {
                 when ([MODE_NORMAL, qr{^(\*+)\s*(.+)$}]) {
@@ -66,7 +78,7 @@ sub parse {
                     $res .= '<p>' . escape_html($line);
                 }
                 default {
-                    die "SHOULD NOT REACHE HERE";
+                    die "SHOULD NOT REACHE HERE: $mode, '$line'";
                 }
             }
         }
@@ -78,6 +90,7 @@ sub parse {
     if ($mode == MODE_P) {
         $res .= "</p>";
     }
+    $res =~ s{<p></p>}{}g;
     return $res;
 }
 
