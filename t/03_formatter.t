@@ -16,6 +16,31 @@ run_is input => 'expected';
 
 __END__
 
+=== h
+--- input
+* Amon
+** h2
+--- expected
+<h1>Amon</h1>
+<h2>h2</h2>
+
+=== pre
+--- input
+foo
+>||
+bar
+bos
+||<
+baz
+biz
+--- expected
+foo<br />
+<pre>bar
+bos
+</pre>
+baz<br />
+biz<br />
+
 ===
 --- input
 * Amon TODO
