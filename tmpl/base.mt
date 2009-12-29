@@ -6,6 +6,7 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <title><? block title => 'Amon' ?></title>
     <link href="<?= uri_for('/static/css/main.css') ?>" rel="stylesheet" type="text/css" media="screen" />
+    <? block header_part => '' ?>
 </head>
 <body>
     <div class="wrapper">

@@ -41,4 +41,26 @@ sub post_edit {
     redirect("/entry/@{[ $entry_id ]}");
 }
 
+sub history {
+    my ($class, $entry_id) = @_;
+
+    my $entry = model('DB')->single(entry => {entry_id => $entry_id});
+
+    my $page = param('page') || 1;
+    my $rows_per_page = 20;
+
+    my @histories = model('DB')->search(
+        'entry_history' => { entry_id => $entry_id },
+        {
+            order_by => {'entry_history_id' => 'DESC'},
+            limit    => $rows_per_page+1,
+            offset   => $rows_per_page*($page-1),
+        }
+    );
+    my $has_next =  ($rows_per_page+1 == @histories);
+    if ($has_next) { pop @histories }
+
+    render("history.mt", $entry, \@histories, $page, $has_next);
+}
+
 1;

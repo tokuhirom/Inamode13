@@ -20,6 +20,9 @@ sub dispatch {
         when (['POST', qr{^/entry/(\d+)/edit$}]) {
             call('Entry', 'post_edit', $1);
         }
+        when (['GET', qr{^/entry/(\d+)/history$}]) {
+            call('Entry', 'history', $1);
+        }
         default {
             res_404();
         }

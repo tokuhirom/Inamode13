@@ -6,7 +6,7 @@ use Inamode13::Formatter;
 
 install_table entry => schema {
     pk 'entry_id';
-    columns qw/entry_id body title_cache html_cache mtime/;
+    columns qw/entry_id body title_cache html_cache mtime revision/;
 
     my $updater = sub {
         my ($skinny, $data) = @_;
@@ -14,15 +14,20 @@ install_table entry => schema {
         my ($title, ) = split /\n/, $body;
         $data->{title_cache} = $title;
         $data->{html_cache} = Inamode13::Formatter->new()->parse($body);
+        $data->{mtime} = time();
     };
 
     trigger pre_insert => $updater;
-    trigger pre_update => $updater;
+    trigger pre_update => sub {
+        my ($skinny, $data) = @_;
+        $data->{revision} = \"revision + 1";
+        $updater->(@_);
+    };
 };
 
 install_table entry_history => schema {
-    pk 'entry_id';
-    columns qw/entry_id body ctime/;
+    pk 'entry_history_id';
+    columns qw/entry_history_id entry_id body ctime revision/;
 };
 
 1;
