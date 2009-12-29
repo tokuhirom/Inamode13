@@ -3,8 +3,9 @@ use warnings;
 use Plack::Test;
 use Plack::Util;
 use Test::More;
+use t::Utils;
 
-my $app = Plack::Util::load_psgi 'Inamode13.psgi';
+my $app = setup_webapp();
 test_psgi
     app => $app,
     client => sub {

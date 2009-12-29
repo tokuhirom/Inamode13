@@ -4,8 +4,9 @@ use Plack::Test;
 use Plack::Util;
 use Test::More;
 use Test::Requires 'Test::WWW::Mechanize::PSGI';
+use t::Utils;
 
-my $app = Plack::Util::load_psgi 'Inamode13.psgi';
+my $app = setup_webapp();
 
 my $mech = Test::WWW::Mechanize::PSGI->new(app => $app);
 $mech->get_ok('/');
