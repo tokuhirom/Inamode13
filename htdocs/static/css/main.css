@@ -1,0 +1,78 @@
+* {
+    margin: 0;
+}
+
+body {
+    color: black;
+    background-color: white;
+    font-family: "メイリオ","Hiragino Kaku Gothic Pro","ヒラギノ角ゴ Pro W3","ＭＳ Ｐゴシック","Osaka",sans-selif;
+}
+
+a {
+    color: #666666;
+}
+a:hover {
+    color: #444444;
+}
+
+.wrapper {
+    width: 640px;
+    margin: auto;
+}
+
+.header {
+    text-align: center;
+    margin: auto;
+}
+
+.header .site-description {
+    color: #cccccc;
+}
+
+.form-container {
+    padding: 10px;
+    background-color: #eeeeee;
+    border-radius:10px;
+    -moz-border-radius:10px;
+    -webkit-border-radius:10px;
+}
+
+form .nm {
+    margin-top: 3px;
+    text-align: center;
+}
+
+.form-container form input {
+    font-size: 200%;
+    width: 150px;
+}
+
+.hentry {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.hentry .entry-no {
+    float: left;
+    font-size: 160%;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.hentry .entry-content {
+    float: left;
+    width: 500px;
+    margin-top: 20px;
+    padding-left: 10px;
+}
+
+.hentry .bookmark {
+    font-size: x-small;
+    text-align: right;
+}
+
+.clear-both {
+    clear: both;
+    width: 0px;height 0px;
+}
+
