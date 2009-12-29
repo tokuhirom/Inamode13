@@ -1,11 +1,21 @@
 package Inamode13::Web::C::Entry;
 use Amon::Web::C;
 use Encode;
+use Socket qw/inet_aton/;
+
+sub _addr {
+    unpack('N*', inet_aton(req()->address()))
+}
 
 sub post {
     if (my $body = param('body')) {
         $body = decode_utf8($body);
-        my $entry = model('DB')->insert(entry => { body => $body });
+        my $entry = model('DB')->insert(
+            entry => {
+                body        => $body,
+                remote_addr => _addr(),
+            }
+        );
         redirect("/entry/@{[ $entry->entry_id ]}");
     } else {
         redirect('/');
@@ -36,7 +46,12 @@ sub post_edit {
        $body = decode_utf8 $body;
     return redirect('/') unless $body;
 
-    $entry->update({body => $body});
+    $entry->update(
+        {
+            body        => $body,
+            remote_addr => _addr(),
+        }
+    );
 
     redirect("/entry/@{[ $entry_id ]}");
 }

@@ -20,8 +20,14 @@ sub index {
 }
 
 sub rss {
-    my $entry = model('DB')->search('entry', { }, { order_by => { entry_id => 'DESC' }, limit => 20 });
-    render('rss.mt', $entry);
+    my (@entries) = model('DB')->search(
+        'entry', {},
+        {
+            order_by => { entry_id => 'DESC' },
+            limit    => 20,
+        }
+    );
+    render('rss.mt', \@entries);
 }
 
 1;

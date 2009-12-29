@@ -6,6 +6,7 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <title><? block title => 'Amon' ?></title>
     <link href="<?= uri_for('/static/css/main.css') ?>" rel="stylesheet" type="text/css" media="screen" />
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="http://inamode.64p.org/index.rss">
     <? block header_part => '' ?>
 </head>
 <body>

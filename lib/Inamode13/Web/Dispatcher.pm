@@ -23,6 +23,9 @@ sub dispatch {
         when (['GET', qr{^/entry/(\d+)/history$}]) {
             call('Entry', 'history', $1);
         }
+        when (['GET', '/index.rss']) {
+            call('Root', 'rss');
+        }
         default {
             res_404();
         }

@@ -6,7 +6,7 @@ use Inamode13::Formatter;
 
 install_table entry => schema {
     pk 'entry_id';
-    columns qw/entry_id body title_cache html_cache mtime revision/;
+    columns qw/entry_id body title_cache html_cache mtime revision remote_addr/;
 
     my $updater = sub {
         my ($skinny, $data) = @_;
@@ -27,7 +27,7 @@ install_table entry => schema {
 
 install_table entry_history => schema {
     pk 'entry_history_id';
-    columns qw/entry_history_id entry_id body ctime revision/;
+    columns qw/entry_history_id entry_id body ctime revision remote_addr/;
 };
 
 1;

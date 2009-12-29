@@ -10,10 +10,18 @@ test_psgi
     app => $app,
     client => sub {
         my $cb = shift;
-        my $req = HTTP::Request->new(GET => 'http://localhost/');
-        my $res = $cb->($req);
-        is $res->code, 200;
-        diag $res->content if $res->code != 200;
+        do {
+            my $req = HTTP::Request->new(GET => 'http://localhost/');
+            my $res = $cb->($req);
+            is $res->code, 200;
+            diag $res->content if $res->code != 200;
+        };
+        do {
+            my $req = HTTP::Request->new(GET => 'http://localhost/index.rss');
+            my $res = $cb->($req);
+            is $res->code, 200;
+            diag $res->content if $res->code != 200;
+        };
     };
 
 done_testing;

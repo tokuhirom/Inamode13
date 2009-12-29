@@ -4,7 +4,8 @@ create table entry (
     title_cache varchar(255) not null,
     html_cache text not null,
     mtime integer,
-    revision integer unsigned not null default 1
+    revision integer unsigned not null default 1,
+    remote_addr integer unsigned not null
 ) engine="innodb";
 
 create table entry_history (
@@ -12,6 +13,7 @@ create table entry_history (
     entry_id integer not null,
     body text not null,
     ctime integer not null,
-    revision integer not null
+    revision integer not null,
+    remote_addr integer unsigned not null
 ) engine="innodb";
 
