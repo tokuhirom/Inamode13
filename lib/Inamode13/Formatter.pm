@@ -7,7 +7,6 @@ use constant {
     MODE_NORMAL => 0,
     MODE_LI     => 1,
     MODE_PRE    => 2,
-    MODE_P      => 3,
 };
 
 sub new {
@@ -21,10 +20,7 @@ sub parse {
     my $mode = MODE_NORMAL;
     my $li_level = 0;
     for my $line (split /\n/, $src) {
-        if (($mode == MODE_NORMAL || $mode == MODE_P || $mode == MODE_LI) && $line =~ qr{^(-+)\s*(.+)$}) {
-            if ($mode == MODE_P) {
-                $res .= "</p>\n";
-            }
+        if (($mode == MODE_NORMAL || $mode == MODE_LI) && $line =~ qr{^(-+)\s*(.+)$}) {
             if (length($1) > $li_level) {
                 if ($li_level == 0) {
                     $res .= "<ul>\n";
@@ -51,11 +47,6 @@ sub parse {
                     my $level = length($1) + $self->{header_level};
                     $res .= sprintf "<h$level>%s</h$level>\n", escape_html($2);
                 }
-                when ([MODE_P, '>||']) {
-                    $_->[0] = $mode = MODE_NORMAL;
-                    $res .= "</p>\n";
-                    continue;
-                }
                 when ([MODE_NORMAL, '>||']) {
                     $mode = MODE_PRE;
                     $res .= "<pre>";
@@ -67,15 +58,8 @@ sub parse {
                 when ([MODE_PRE, qr{(.*)}]) {
                     $res .= escape_html($1) . "\n";
                 }
-                when ([MODE_P, '']) {
-                    $res .= '</p>';
-                }
-                when ([MODE_P, qr{(.*)}]) {
-                    $res .= escape_html($line);
-                }
                 when ([MODE_NORMAL, qr{(.*)}]) {
-                    $mode = MODE_P;
-                    $res .= '<p>' . escape_html($line);
+                    $res .= escape_html($line) . "<br />\n";
                 }
                 default {
                     die "SHOULD NOT REACHE HERE: $mode, '$line'";
@@ -87,10 +71,6 @@ sub parse {
         $res .= "</ul>" x $li_level;
         $li_level = 0;
     }
-    if ($mode == MODE_P) {
-        $res .= "</p>";
-    }
-    $res =~ s{<p></p>}{}g;
     return $res;
 }
 

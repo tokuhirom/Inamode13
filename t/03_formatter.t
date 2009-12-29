@@ -25,9 +25,9 @@ __END__
 ka
 --- expected
 <h1>Amon TODO</h1>
-
+<br />
 <ul>
 <li>param_decoded()</li>
 <li>mobile support</li>
 </ul>
-<p>ka</p>
+ka<br />
