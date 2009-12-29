@@ -24,7 +24,6 @@ our $CONFIG = {
     },
 };
 our $SCHEMA  = 'sql/mysql.sql';
-our $TRIGGER = 'sql/mysql-trigger.sql';
 
 sub setup_standalone {
     setup_db();
@@ -41,10 +40,6 @@ sub setup_db {
     $dbh->do("DROP DATABASE IF EXISTS $DBNAME");
     $dbh->do("CREATE DATABASE $DBNAME");
     for my $sql (split /;/, slurp($SCHEMA)) {
-        next unless $sql =~ /\S/;
-        $dbh->do("use $DBNAME;$sql") or die;
-    }
-    for my $sql (split m{//}, slurp($TRIGGER)) {
         next unless $sql =~ /\S/;
         $dbh->do("use $DBNAME;$sql") or die;
     }

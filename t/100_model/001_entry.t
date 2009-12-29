@@ -3,14 +3,13 @@ use warnings;
 use t::Utils;
 use Inamode13;
 use Test::More;
+use Amon::Declare;
 
 my $c = setup_standalone();
 
 # insert
-my $entry = $c->model('DB')->insert(
-    entry => {
-        body => "hello, john\nokay\n- why\n"
-    }
+my $entry = model('Entry')->insert(
+    "hello, john\nokay\n- why\n", '127.0.0.1'
 );
 $entry = $c->model('DB')->single(entry => {entry_id => $entry->entry_id});
 ok $entry;
@@ -20,9 +19,9 @@ ok $entry->mtime;
 is $entry->revision, 1;
 
 # update
-$entry->update({
-    body => "okay\nfoo\nbar",
-});
+model('Entry')->update(
+    $entry, "okay\nfoo\nbar", '127.0.0.1'
+);
 is $entry->title_cache, "okay";
 like $entry->html_cache, qr/bar/;
 
@@ -35,11 +34,11 @@ my $history = $c->model('DB')->single(entry_history => {
     entry_id => $entry->entry_id
 });
 is $history->body, "hello, john\nokay\n- why\n", 'inserted history';
-is $history->revision, 1;
+is $history->revision, 1, 'older revision';
 is $c->model('DB')->count('entry_history' => entry_id => {entry_id => $entry->entry_id}), 1;
 
 # do not change revision if body was not changed
-$entry->update({ body => "okay\nfoo\nbar" });
+model('Entry')->update($entry, "okay\nfoo\nbar", '127.0.0.1');
 is $c->model('DB')->count('entry_history' => entry_id => {entry_id => $entry->entry_id}), 1;
 $entry = $c->model('DB')->single(entry => {entry_id => $entry->entry_id});
 is $entry->revision, 2;
