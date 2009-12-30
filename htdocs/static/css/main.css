@@ -48,7 +48,11 @@ form .nm {
 
 .form-container form input {
     font-size: 200%;
-    width: 150px;
+    width: 40%;
+}
+
+.form-container textarea {
+    width: 90%;
 }
 
 .hentry {
@@ -60,7 +64,6 @@ form .nm {
     float: left;
     font-size: 160%;
     font-weight: bold;
-    margin-right: 10px;
 }
 
 .hentry .entry-content {
