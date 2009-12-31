@@ -64,6 +64,7 @@ sub set_cache {
 
     my $body = $entry->body;
     my ($title, ) = split /\n/, $body;
+    $title =~ s/^\*\s*//;
     my $html = Inamode13::Formatter->new()->parse($body);
     $entry->update({
         title_cache => $title,
