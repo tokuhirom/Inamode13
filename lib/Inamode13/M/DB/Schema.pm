@@ -6,7 +6,7 @@ use Inamode13::Formatter;
 
 install_table entry => schema {
     pk 'entry_id';
-    columns qw/entry_id body title_cache html_cache mtime revision remote_addr/;
+    columns qw/entry_id body title_cache html_cache mtime revision remote_addr anchor_ref/;
 };
 
 install_table entry_history => schema {

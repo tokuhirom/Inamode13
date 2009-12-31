@@ -5,7 +5,8 @@ create table entry (
     html_cache text not null,
     mtime integer,
     revision integer unsigned not null default 1,
-    remote_addr integer unsigned not null
+    remote_addr integer unsigned not null,
+    anchor_ref text default ''
 ) engine="innodb";
 
 create table entry_history (

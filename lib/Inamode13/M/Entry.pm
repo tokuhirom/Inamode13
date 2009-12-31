@@ -4,6 +4,7 @@ use warnings;
 use Inamode13::Formatter;
 use Amon::Declare;
 use Socket qw/inet_aton/;
+use List::MoreUtils qw/uniq/;
 
 sub new { bless {}, shift }
 
@@ -68,6 +69,16 @@ sub set_cache {
         title_cache => $title,
         html_cache  => $html,
     });
+
+    for my $rel_entry_id ($body =~ />>(\d+)/g) {
+        my $rel_entry = model('DB')->single(entry => {entry_id => $rel_entry_id});
+        my $anchor_ref = do {
+            my @ids = split /,/, ($rel_entry->anchor_ref || '');
+            push @ids, $entry->entry_id;
+            join ',', uniq sort { $a <=> $b } @ids;
+        };
+        $rel_entry->update({anchor_ref => $anchor_ref});
+    }
 }
 
 1;
