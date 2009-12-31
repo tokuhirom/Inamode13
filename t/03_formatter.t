@@ -83,5 +83,7 @@ ka<br />
 === link
 --- input
 http://google.com
+<img src="http://www.google.co.jp/intl/ja_jp/images/logo.gif" />
 --- expected
 <a href="http://google.com">http://google.com</a><br />
+<img src="http://www.google.co.jp/intl/ja_jp/images/logo.gif" /><br />

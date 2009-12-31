@@ -3,6 +3,8 @@ use strict;
 use warnings;
 use utf8;
 
+our $URL_RE = qr{https?://[-_.!~*'()a-zA-Z0-9;/?:@&=+\$,%#]+};
+
 sub new {
     my ($class, %args) = @_;
     bless {
@@ -68,19 +70,15 @@ sub parse {
 
 sub _escape_stmt {
     my ($self, $str) = @_;
-    my $url_re = qr{https?://[-_.!~*'()a-zA-Z0-9;/?:@&=+\$,%#]+};
-    $str =~ s!>>([0-9]+)|([&><"'])|($url_re)!
-        if ($2) {
-            _escape_html($2)
-        } elsif ($1) {
+    $str =~ s!>>([0-9]+)|($URL_RE)|<img\s*src=['""]($URL_RE)['"]\s*/?>|([&><"'])!
+        if ($1) {
             sprintf $self->{anchor_tmpl}, $1, $1;
+        } elsif ($2) {
+            sprintf q{<a href="%s">%s</a>}, _escape_html($2), _escape_html($2);
         } elsif ($3) {
-            my $url = $3;
-            if ($url =~ /\.(?:jpg|gif|png)$/) {
-                sprintf q{<img src="%s" alt="%s" />}, $url, _escape_html($url);
-            } else {
-                sprintf q{<a href="%s">%s</a>}, _escape_html($url), _escape_html($url);
-            }
+            sprintf q{<img src="%s" />}, _escape_html($3);
+        } elsif ($4) {
+            _escape_html($4)
         }
     !ge;    #' for poor editors
     return $str;
