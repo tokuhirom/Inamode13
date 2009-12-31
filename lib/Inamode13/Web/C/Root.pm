@@ -27,7 +27,11 @@ sub rss {
             limit    => 20,
         }
     );
-    render('rss.mt', \@entries);
+    my $body = view('MT')->render('rss.mt', \@entries);
+    utf8::encode($body);
+    detach(
+        [200, ['Content-Length' => length($body), 'Content-Type' => 'application/rss+xml'], [$body]]
+    );
 }
 
 1;
