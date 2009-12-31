@@ -17,6 +17,8 @@ sub parse {
     my $res = '';
     my @lines = split /\n/, $src;
     for (my $i=0; $i<@lines; ) {
+        $lines[$i] =~ s/\r//;
+
         if ($lines[$i] =~ /^(\*{1,4})\s*(.+)$/) {
             my $level = length($1) + $self->{header_level};
             $res .= sprintf "<h$level>%s</h$level>\n", $self->escape_html($2);
