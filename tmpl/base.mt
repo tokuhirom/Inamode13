@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Script-Type" content="text/javascript" />
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <title><? block title => 'Amon' ?></title>
-    <link rel="alternate" type="application/rss+xml" title="RSS" href="http://inamode.64p.org/index.rss">
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="http://inamode.64p.org/index.rss" />
     <link href="<?= uri_for('/static/css/main.css') ?>" rel="stylesheet" type="text/css" media="screen" />
     <link type="text/css" rel="stylesheet" media="only screen and (max-device-width: 480px)" href="<?= uri_for('/static/css/iphone.css') ?>" />
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
