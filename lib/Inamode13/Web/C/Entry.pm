@@ -48,7 +48,7 @@ sub post_edit {
 sub history {
     my ($class, $entry_id) = @_;
 
-    my $entry = model('DB')->single(entry => {entry_id => $entry_id});
+    my $entry = model('DB')->single(entry => {entry_id => $entry_id}) or res_404();
 
     my $page = param('page') || 1;
     my $rows_per_page = 20;
@@ -65,6 +65,14 @@ sub history {
     if ($has_next) { pop @histories }
 
     render("history.mt", $entry, \@histories, $page, $has_next);
+}
+
+sub reply {
+    my ($class, $entry_id) = @_;
+    my $entry = model('DB')->single(entry => {entry_id => $entry_id}) or res_404();
+    my $quote  = ">>$entry_id\n\n";
+       $quote .= join "\n", map { "> $_" } split /(?:\r\n|\r|\n)/, $entry->body;
+    render('reply.mt', $entry, $quote);
 }
 
 1;
