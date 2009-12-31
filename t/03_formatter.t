@@ -68,3 +68,14 @@ ka<br />
 --- expected
 <a href="/entry/1">&gt;&gt;1</a><br />
 
+=== ol
+--- input
++ foo
+++ bar
+--- expected
+<ol>
+<li>foo</li>
+<li><ol>
+<li>bar</li>
+</ol></li>
+</ol>

@@ -29,27 +29,34 @@ sub parse {
                 ++$i;
             }
             $res .= "</pre>\n"; ++$i; # '||<'
-        } elsif ($lines[$i] =~ /^(-+)\s*(.+)$/) {
-            my $li_level = 0;
-            while (@lines > $i && $lines[$i] =~ /^(-+)\s*(.+)$/) {
-                if (length($1) > $li_level) {
-                    if ($li_level == 0) {
-                        $res .= "<ul>\n";
-                        $li_level++;
+        } elsif ($lines[$i] =~ /^([-+])/) {
+            my $mark = $1;
+            my $tag = {
+                '+' => 'ol',
+                '-' => 'ul',
+            }->{$mark} or die "err";
+            $mark = quotemeta($mark);
+
+            my $level = 0;
+            while (@lines > $i && $lines[$i] =~ /^($mark+)\s*(.+)$/) {
+                if (length($1) > $level) {
+                    if ($level == 0) {
+                        $res .= "<$tag>\n";
+                        $level++;
                     }
-                    $res .= "<li><ul>\n" x (length($1)-$li_level);
-                } elsif (length($1) < $li_level) {
-                    $res .= "</ul></li>" x ($li_level-length($1));
+                    $res .= "<li><$tag>\n" x (length($1)-$level);
+                } elsif (length($1) < $level) {
+                    $res .= "</$tag></li>" x ($level-length($1));
                 }
-                $li_level = length($1);
+                $level = length($1);
                 $res .= sprintf "<li>%s</li>\n", $self->escape_html($2);
                 ++$i;
             }
-            if ($li_level > 0) {
-                if ($li_level > 1) {
-                    $res .= "</ul></li>\n" x ($li_level-1);
+            if ($level > 0) {
+                if ($level > 1) {
+                    $res .= "</$tag></li>\n" x ($level-1);
                 }
-                $res .= "</ul>\n";
+                $res .= "</$tag>\n";
             }
         } else {
             $res .= $self->escape_html($lines[$i]) . "<br />\n";
