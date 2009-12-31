@@ -5,4 +5,7 @@
         password => '',
         connect_options => +{ 'mysql_enable_utf8' => 1 },
     },
+    'V::MT' => {
+        cache_mode => 2,
+    },
 };
