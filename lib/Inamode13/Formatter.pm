@@ -5,7 +5,11 @@ use utf8;
 
 sub new {
     my ($class, %args) = @_;
-    bless {header_level => 0, %args}, $class;
+    bless {
+        header_level => 0,
+        anchor_tmpl  => q{<a href="/entry/%d">&gt;&gt;%d</a>},
+        %args,
+    }, $class;
 }
 
 sub parse {
@@ -15,12 +19,12 @@ sub parse {
     for (my $i=0; $i<@lines; ) {
         if ($lines[$i] =~ /^(\*{1,4})\s*(.+)$/) {
             my $level = length($1) + $self->{header_level};
-            $res .= sprintf "<h$level>%s</h$level>\n", escape_html($2);
+            $res .= sprintf "<h$level>%s</h$level>\n", $self->escape_html($2);
             ++$i;
         } elsif ($lines[$i] eq '>||') {
             $res .= "<pre>";    ++$i; # '>||'
             while (@lines > $i && $lines[$i] ne '||<') {
-                $res .= escape_html($lines[$i]) . "\n";
+                $res .= $self->escape_html($lines[$i]) . "\n";
                 ++$i;
             }
             $res .= "</pre>\n"; ++$i; # '||<'
@@ -37,7 +41,7 @@ sub parse {
                     $res .= "</ul></li>" x ($li_level-length($1));
                 }
                 $li_level = length($1);
-                $res .= sprintf "<li>%s</li>\n", escape_html($2);
+                $res .= sprintf "<li>%s</li>\n", $self->escape_html($2);
                 ++$i;
             }
             if ($li_level > 0) {
@@ -47,7 +51,7 @@ sub parse {
                 $res .= "</ul>\n";
             }
         } else {
-            $res .= escape_html($lines[$i]) . "<br />\n";
+            $res .= $self->escape_html($lines[$i]) . "<br />\n";
             ++$i;
         }
     }
@@ -56,10 +60,14 @@ sub parse {
 
 our %_escape_table = ( '&' => '&amp;', '>' => '&gt;', '<' => '&lt;', q{"} => '&quot;', q{'} => '&#39;' );
 sub escape_html {
-    my $str = shift;
-    return ''
-      unless defined $str;
-    $str =~ s/([&><"'])/$_escape_table{$1}/ge;    #' for poor editors
+    my ($self, $str) = @_;
+    $str =~ s/>>([0-9]+)|([&><"'])/
+        if ($2) {
+            $_escape_table{$2}
+        } elsif ($1) {
+            sprintf $self->{anchor_tmpl}, $1, $1;
+        }
+    /ge;    #' for poor editors
     return $str;
 }
 

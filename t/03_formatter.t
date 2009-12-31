@@ -56,3 +56,10 @@ ka
 <li>mobile support</li>
 </ul>
 ka<br />
+
+=== anchor
+--- input
+>>1
+--- expected
+<a href="/entry/1">&gt;&gt;1</a><br />
+
