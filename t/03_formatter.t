@@ -79,3 +79,9 @@ ka<br />
 <li>bar</li>
 </ol></li>
 </ol>
+
+=== link
+--- input
+http://google.com
+--- expected
+<a href="http://google.com">http://google.com</a><br />

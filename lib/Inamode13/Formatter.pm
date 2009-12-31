@@ -19,13 +19,13 @@ sub parse {
     for (my $i=0; $i<@lines; ) {
         if ($lines[$i] =~ /^(\*{1,4})\s*(.+)$/) {
             my $level = length($1) + $self->{header_level};
-            $res .= sprintf "<h$level>%s</h$level>\n", $self->escape_html($2);
+            $res .= sprintf "<h$level>%s</h$level>\n", $self->_escape_stmt($2);
             ++$i;
         } elsif ($lines[$i] =~ /^>\|([a-z0-9]+)?\|$/) {
             my $pre_class = $1 ? "prettyprint lang-$1"  : 'prettyprint';
             $res .= qq{<pre class="$pre_class">};    ++$i; # '>||'
             while (@lines > $i && $lines[$i] ne '||<') {
-                $res .= $self->escape_html($lines[$i]) . "\n";
+                $res .= $self->_escape_stmt($lines[$i]) . "\n";
                 ++$i;
             }
             $res .= "</pre>\n"; ++$i; # '||<'
@@ -49,7 +49,7 @@ sub parse {
                     $res .= "</$tag></li>" x ($level-length($1));
                 }
                 $level = length($1);
-                $res .= sprintf "<li>%s</li>\n", $self->escape_html($2);
+                $res .= sprintf "<li>%s</li>\n", $self->_escape_stmt($2);
                 ++$i;
             }
             if ($level > 0) {
@@ -59,26 +59,39 @@ sub parse {
                 $res .= "</$tag>\n";
             }
         } else {
-            $res .= $self->escape_html($lines[$i]) . "<br />\n";
+            $res .= $self->_escape_stmt($lines[$i]) . "<br />\n";
             ++$i;
         }
     }
     return $res;
 }
 
-our %_escape_table = ( '&' => '&amp;', '>' => '&gt;', '<' => '&lt;', q{"} => '&quot;', q{'} => '&#39;' );
-sub escape_html {
+sub _escape_stmt {
     my ($self, $str) = @_;
-    $str =~ s/>>([0-9]+)|([&><"'])/
+    my $url_re = qr{https?://[-_.!~*'()a-zA-Z0-9;/?:@&=+\$,%#]+};
+    $str =~ s!>>([0-9]+)|([&><"'])|($url_re)!
         if ($2) {
-            $_escape_table{$2}
+            _escape_html($2)
         } elsif ($1) {
             sprintf $self->{anchor_tmpl}, $1, $1;
+        } elsif ($3) {
+            my $url = $3;
+            if ($url =~ /\.(?:jpg|gif|png)$/) {
+                sprintf q{<img src="%s" alt="%s" />}, $url, _escape_html($url);
+            } else {
+                sprintf q{<a href="%s">%s</a>}, _escape_html($url), _escape_html($url);
+            }
         }
-    /ge;    #' for poor editors
+    !ge;    #' for poor editors
     return $str;
 }
 
+our %_escape_table = ( '&' => '&amp;', '>' => '&gt;', '<' => '&lt;', q{"} => '&quot;', q{'} => '&#39;' );
+sub _escape_html {
+    local $_ = $_[0];
+    s!([&><"'])!$_escape_table{$1}!ge;
+    $_;
+}
 
 1;
 __END__
