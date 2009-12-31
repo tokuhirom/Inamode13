@@ -32,13 +32,18 @@ bar
 bos
 ||<
 baz
+>|perl|
+use strict;
+||<
 biz
 --- expected
 foo<br />
-<pre>bar
+<pre class="prettyprint">bar
 bos
 </pre>
 baz<br />
+<pre class="prettyprint lang-perl">use strict;
+</pre>
 biz<br />
 
 ===

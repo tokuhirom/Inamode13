@@ -8,6 +8,7 @@
     <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/inamode13" />
     <link href="<?= uri_for('/static/css/main.css') ?>" rel="stylesheet" type="text/css" media="screen" />
     <link type="text/css" rel="stylesheet" media="only screen and (max-device-width: 480px)" href="<?= uri_for('/static/css/iphone.css') ?>" />
+    <link href="<?= uri_for('/static/prettify/prettify.css') ?>" rel="stylesheet" type="text/css" media="screen" />
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
     <? block header_part => '' ?>
 </head>
@@ -31,6 +32,9 @@
             </p>
         </div>
     </div>
+    <script type="text/javascript" src="<?= uri_for('/static/prettify/prettify.js') ?>"></script>
+    <script type="text/javascript" src="<?= uri_for('/static/js/jquery-1.3.2.min.js') ?>"></script>
+    <script type="text/javascript" src="<?= uri_for('/static/js/inamode.js') ?>"></script>
     <script type="text/javascript">
     var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
     document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));

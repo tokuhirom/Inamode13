@@ -15,16 +15,15 @@ sub new {
 sub parse {
     my ($self, $src) = @_;
     my $res = '';
-    my @lines = split /\n/, $src;
+    my @lines = split /(?:\r\n|\r|\n)/, $src;
     for (my $i=0; $i<@lines; ) {
-        $lines[$i] =~ s/\r//;
-
         if ($lines[$i] =~ /^(\*{1,4})\s*(.+)$/) {
             my $level = length($1) + $self->{header_level};
             $res .= sprintf "<h$level>%s</h$level>\n", $self->escape_html($2);
             ++$i;
-        } elsif ($lines[$i] eq '>||') {
-            $res .= "<pre>";    ++$i; # '>||'
+        } elsif ($lines[$i] =~ /^>\|([a-z0-9]+)?\|$/) {
+            my $pre_class = $1 ? "prettyprint lang-$1"  : 'prettyprint';
+            $res .= qq{<pre class="$pre_class">};    ++$i; # '>||'
             while (@lines > $i && $lines[$i] ne '||<') {
                 $res .= $self->escape_html($lines[$i]) . "\n";
                 ++$i;
