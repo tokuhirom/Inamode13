@@ -18,6 +18,7 @@
 ? if ($entry->revision > 1) {
         <a href="/entry/<?= $entry->entry_id ?>/history">history</a>
 ? }
-        <span class="updated bookmark"><a href="/entry/<?= $entry->entry_id ?>" rel="bookmark"><?= $entry->mtime_strftime('%Y-%m-%d(%a) %T') ?></a></span>
+        <a href="http://b.hatena.ne.jp/entry/<?= permalink($entry) ?>"><img src="http://b.hatena.ne.jp/entry/image/<?= permalink($entry) ?>" alt="B!" /></a>
+        <span class="updated bookmark"><a href="<?= permalink($entry) ?>" rel="bookmark"><?= $entry->mtime_strftime('%Y-%m-%d(%a) %T') ?></a></span>
     </div>
 </div>
