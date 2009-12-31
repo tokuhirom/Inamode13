@@ -87,3 +87,8 @@ form .nm {
     text-align: right;
     font-size: 70%;
 }
+
+.hentry .title {
+    display: none;
+}
+

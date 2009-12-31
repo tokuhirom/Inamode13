@@ -44,5 +44,17 @@
     var pageTracker = _gat._getTracker("UA-59935-3");
     pageTracker._trackPageview();
     } catch(err) {}</script>
+    <script type="text/javascript" src="http://s.hatena.ne.jp/js/HatenaStar.js"></script>
+    <script type="text/javascript">
+    Hatena.Star.SiteConfig = {
+        entryNodes: {
+            'div.hentry': {
+                uri: '.bookmark a',
+                title: '.entry-title',
+                container: '.star-container'
+            }
+        }
+    };
+    </script>
 </body>
 </html>

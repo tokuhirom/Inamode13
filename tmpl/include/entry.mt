@@ -1,10 +1,12 @@
 ? my $entry = shift;
 
 <div class="hentry">
-    <div class="entry-no"><?= $entry->entry_id ?></div>
+    <div class="entry-no"><a href="<?= permalink($entry) ?>"><?= $entry->entry_id ?></a></div>
+    <span class="entry-title"><?= $entry->title ?></span>
     <div class="entry-content"><?= $entry->html ?></div>
     <div class="clear-both">&nbsp;</div>
     <div class="entry-footer">
+        <div class="star-container"></div>
 ? if ($entry->anchor_ref) {
         <div class="entry-rel">
             Rel:
