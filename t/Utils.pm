@@ -6,43 +6,40 @@ our @EXPORT = qw/setup_standalone setup_webapp/;
 use Inamode13;
 use Inamode13::Web;
 use DBI;
+use Test::mysqld;
+use Test::More;
 
 our $DBNAME = 'test_Inamode13';
 our $DBUSER = 'test';
 our $DBPASS = '';
-our $SETUP_DB = [
-    'dbi:mysql:',
-    $DBUSER,
-    $DBPASS,
-    {mysql_multi_statements => 1,}
-];
 our $CONFIG = {
-    'M::DB' => {
-        dsn => "dbi:mysql:database=$DBNAME",
-        username => $DBUSER,
-        password => $DBPASS,
-    },
+    'M::DB' => { },
 };
 our $SCHEMA  = 'sql/mysql.sql';
 
 sub setup_standalone {
-    setup_db();
-    return Inamode13->bootstrap(config => $CONFIG);
+    my $mysqld = setup_db();
+    return Inamode13->bootstrap(config => $CONFIG, mysqld => $mysqld);
 }
 
 sub setup_webapp {
-    setup_db();
-    Inamode13::Web->to_app(config => $CONFIG);
+    my $mysqld = setup_db();
+    Inamode13::Web->to_app(config => $CONFIG, mysqld => $mysqld);
 }
 
 sub setup_db {
-    my $dbh = DBI->connect(@$SETUP_DB) or die;
-    $dbh->do("DROP DATABASE IF EXISTS $DBNAME");
-    $dbh->do("CREATE DATABASE $DBNAME");
+    my $mysqld = Test::mysqld->new(
+        my_cnf => {
+            'skip-networking' => '',    # no TCP socket
+        }
+    ) or plan skip_all => $Test::mysqld::errstr;
+    my $dbh = DBI->connect($mysqld->dsn()) or die;
     for my $sql (split /;/, slurp($SCHEMA)) {
         next unless $sql =~ /\S/;
-        $dbh->do("use $DBNAME;$sql") or die;
+        $dbh->do("$sql") or die;
     }
+    $CONFIG->{'M::DB'}->{dsn} = $mysqld->dsn();
+    return $mysqld;
 }
 
 sub slurp {
