@@ -6,31 +6,31 @@ sub dispatch {
     my ($class, $req) = @_;
     given ([$req->method, $req->path_info]) {
         when (['GET', '/']) {
-            call("Root", 'index');
+            return call("Root", 'index');
         }
         when (['POST', '/entry']) {
-            call('Entry', 'post');
+            return call('Entry', 'post');
         }
         when (['GET', qr{^/entry/(\d+)$}]) {
-            call('Entry', 'show', $1);
+            return call('Entry', 'show', $1);
         }
         when (['GET', qr{^/entry/(\d+)/edit$}]) {
-            call('Entry', 'edit_form', $1);
+            return call('Entry', 'edit_form', $1);
         }
         when (['POST', qr{^/entry/(\d+)/edit$}]) {
-            call('Entry', 'post_edit', $1);
+            return call('Entry', 'post_edit', $1);
         }
         when (['GET', qr{^/entry/(\d+)/history$}]) {
-            call('Entry', 'history', $1);
+            return call('Entry', 'history', $1);
         }
         when (['GET', qr{^/entry/(\d+)/reply$}]) {
-            call('Entry', 'reply', $1);
+            return call('Entry', 'reply', $1);
         }
         when (['GET', '/index.rss']) {
-            call('Root', 'rss');
+            return call('Root', 'rss');
         }
         default {
-            res_404();
+            return res_404();
         }
     }
 }
