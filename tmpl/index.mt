@@ -16,4 +16,19 @@
     <hr />
 ? }
 </div>
+
+<div class="pager">
+    <? if ($page != 1) { ?>
+        <a href="<?= uri_for("/", {page => $page - 1 }) ?>" rel="prev" accesskey="4">&lt;Prev</a>
+    <? } else { ?>
+    &lt;Prev
+    <? } ?>
+    |
+    <? if ($has_next) { ?>
+    <a href="<?= uri_for("/", {page => $page + 1}) ?>" rel="next" accesskey="6">Next&gt;</a>
+    <? } else { ?>
+    Next&gt;
+    <? } ?>
+</div>
+
 ? };
