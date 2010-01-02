@@ -6,7 +6,7 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <title><? block title => 'Amon' ?></title>
     <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/inamode13" />
-    <link href="<?= uri_for('/static/css/main.css') ?>" rel="stylesheet" type="text/css" media="screen" />
+    <link href="<?= uri_for('/static/css/main.css') ?>?v=1" rel="stylesheet" type="text/css" media="screen" />
     <link type="text/css" rel="stylesheet" media="only screen and (max-device-width: 480px)" href="<?= uri_for('/static/css/iphone.css') ?>" />
     <link href="<?= uri_for('/static/prettify/prettify.css') ?>" rel="stylesheet" type="text/css" media="screen" />
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />

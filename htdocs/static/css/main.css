@@ -60,6 +60,10 @@ form .nm {
     padding-right: 20px;
 }
 
+.hentry .entry-title {
+    display: none;
+}
+
 .hentry .entry-no {
     float: left;
     font-size: 160%;
