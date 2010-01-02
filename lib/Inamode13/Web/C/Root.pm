@@ -29,9 +29,7 @@ sub rss {
     );
     my $body = view('MT')->render('rss.mt', \@entries);
     utf8::encode($body);
-    Amon->context->response(
-        [200, ['Content-Length' => length($body), 'Content-Type' => 'application/rss+xml'], [$body]]
-    );
+    return [200, ['Content-Length' => length($body), 'Content-Type' => 'application/rss+xml'], [$body]]
 }
 
 1;
