@@ -9,23 +9,20 @@ use DBI;
 use Test::mysqld;
 use Test::More;
 
-our $DBNAME = 'test_Inamode13';
-our $DBUSER = 'test';
-our $DBPASS = '';
 our $CONFIG = {
     'DB' => { },
 };
 our $SCHEMA  = 'sql/mysql.sql';
-my $mysqld;
+our $MYSQLD;
 
 sub setup_standalone {
-    $mysqld = setup_db();
-    return Inamode13->bootstrap(config => $CONFIG, mysqld => $mysqld);
+    $MYSQLD = setup_db();
+    return Inamode13->bootstrap(config => $CONFIG);
 }
 
 sub setup_webapp {
-    $mysqld = setup_db();
-    Inamode13::Web->to_app(config => $CONFIG, mysqld => $mysqld);
+    $MYSQLD = setup_db();
+    return Inamode13::Web->to_app(config => $CONFIG);
 }
 
 sub setup_db {

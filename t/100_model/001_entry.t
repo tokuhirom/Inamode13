@@ -11,7 +11,7 @@ my $c = setup_standalone();
 my $entry = model('Entry')->insert(
     "hello, john\nokay\n- why\n", '127.0.0.1'
 );
-$entry = $c->model('DB')->single(entry => {entry_id => $entry->entry_id});
+$entry = $c->db->single(entry => {entry_id => $entry->entry_id});
 ok $entry;
 like $entry->html_cache, qr/why/;
 is $entry->title_cache, 'hello, john';
@@ -26,21 +26,21 @@ is $entry->title_cache, "okay";
 like $entry->html_cache, qr/bar/;
 
 # check revision number
-$entry = $c->model('DB')->single(entry => {entry_id => $entry->entry_id});
+$entry = $c->db->single(entry => {entry_id => $entry->entry_id});
 is $entry->revision, 2;
 
 # check history
-my $history = $c->model('DB')->single(entry_history => {
+my $history = $c->db->single(entry_history => {
     entry_id => $entry->entry_id
 });
 is $history->body, "hello, john\nokay\n- why\n", 'inserted history';
 is $history->revision, 1, 'older revision';
-is $c->model('DB')->count('entry_history' => entry_id => {entry_id => $entry->entry_id}), 1;
+is $c->db->count('entry_history' => entry_id => {entry_id => $entry->entry_id}), 1;
 
 # do not change revision if body was not changed
 model('Entry')->update($entry, "okay\nfoo\nbar", '127.0.0.1');
-is $c->model('DB')->count('entry_history' => entry_id => {entry_id => $entry->entry_id}), 1;
-$entry = $c->model('DB')->single(entry => {entry_id => $entry->entry_id});
+is $c->db->count('entry_history' => entry_id => {entry_id => $entry->entry_id}), 1;
+$entry = $c->db->single(entry => {entry_id => $entry->entry_id});
 is $entry->revision, 2;
 
 done_testing;

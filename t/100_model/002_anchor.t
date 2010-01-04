@@ -13,13 +13,13 @@ my $entry1 = model('Entry')->insert(
 my $entry2 = model('Entry')->insert(
     ">>1\n", '127.0.0.1'
 );
-$entry1 = model('DB')->single(entry => {entry_id => $entry1->entry_id});
+$entry1 = db->single(entry => {entry_id => $entry1->entry_id});
 ok $entry1;
 is $entry1->anchor_ref, '2';
 my $entry3 = model('Entry')->insert(
     ">>1\n", '127.0.0.1'
 );
-$entry1 = model('DB')->single(entry => {entry_id => $entry1->entry_id});
+$entry1 = db->single(entry => {entry_id => $entry1->entry_id});
 is $entry1->anchor_ref, '2,3';
 
 done_testing;

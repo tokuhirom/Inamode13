@@ -3,8 +3,7 @@ use Amon::Web::C;
 use Encode;
 
 sub post {
-    if (my $body = param('body')) {
-        $body = decode_utf8($body);
+    if (my $body = param_decoded('body')) {
         my $entry = model('Entry')->insert(
             $body, req->address(),
         );
@@ -34,8 +33,7 @@ sub post_edit {
     my ($class, $entry_id) = @_;
     my $entry = db->single('entry', { entry_id => $entry_id });
     return redirect('/') unless $entry;
-    my $body = param('body');
-       $body = decode_utf8 $body;
+    my $body = param_decoded('body');
     return redirect('/') unless $body;
 
     model('Entry')->update(
