@@ -5,7 +5,7 @@ sub index {
     my $page = param('page') || 1;
     my $rows_per_page = 20;
 
-    my @entries = model('DB')->search(
+    my @entries = db->search(
         'entry' => { },
         {
             order_by => {'entry_id' => 'DESC'},
@@ -20,7 +20,7 @@ sub index {
 }
 
 sub rss {
-    my (@entries) = model('DB')->search(
+    my (@entries) = db->search(
         'entry', {},
         {
             order_by => { entry_id => 'DESC' },

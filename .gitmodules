@@ -1,0 +1,3 @@
+[submodule "vendor/Amon"]
+	path = vendor/Amon
+	url = git://github.com/tokuhirom/Amon.git

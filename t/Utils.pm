@@ -13,17 +13,18 @@ our $DBNAME = 'test_Inamode13';
 our $DBUSER = 'test';
 our $DBPASS = '';
 our $CONFIG = {
-    'M::DB' => { },
+    'DB' => { },
 };
 our $SCHEMA  = 'sql/mysql.sql';
+my $mysqld;
 
 sub setup_standalone {
-    my $mysqld = setup_db();
+    $mysqld = setup_db();
     return Inamode13->bootstrap(config => $CONFIG, mysqld => $mysqld);
 }
 
 sub setup_webapp {
-    my $mysqld = setup_db();
+    $mysqld = setup_db();
     Inamode13::Web->to_app(config => $CONFIG, mysqld => $mysqld);
 }
 
@@ -38,7 +39,7 @@ sub setup_db {
         next unless $sql =~ /\S/;
         $dbh->do("$sql") or die;
     }
-    $CONFIG->{'M::DB'}->{dsn} = $mysqld->dsn();
+    $CONFIG->{'DB'}->{dsn} = $mysqld->dsn();
     return $mysqld;
 }
 

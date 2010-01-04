@@ -1,4 +1,4 @@
-package Inamode13::M::DB::Row::Entry;
+package Inamode13::DB::Row::Entry;
 use strict;
 use warnings;
 use base qw/DBIx::Skinny::Row/;

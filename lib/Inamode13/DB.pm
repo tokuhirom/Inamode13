@@ -1,4 +1,4 @@
-package Inamode13::M::DB;
+package Inamode13::DB;
 use strict;
 use warnings;
 use DBIx::Skinny;

@@ -16,7 +16,7 @@ sub post {
 
 sub show {
     my ($class, $entry_id) = @_;
-    my $entry = model('DB')->single('entry', { entry_id => $entry_id });
+    my $entry = db->single('entry', { entry_id => $entry_id });
     return res_404() unless $entry;
 
     render('show.mt', $entry);
@@ -24,7 +24,7 @@ sub show {
 
 sub edit_form {
     my ($class, $entry_id) = @_;
-    my $entry = model('DB')->single('entry', { entry_id => $entry_id });
+    my $entry = db->single('entry', { entry_id => $entry_id });
     return redirect('/') unless $entry;
 
     render('edit.mt', $entry);
@@ -32,7 +32,7 @@ sub edit_form {
 
 sub post_edit {
     my ($class, $entry_id) = @_;
-    my $entry = model('DB')->single('entry', { entry_id => $entry_id });
+    my $entry = db->single('entry', { entry_id => $entry_id });
     return redirect('/') unless $entry;
     my $body = param('body');
        $body = decode_utf8 $body;
@@ -48,12 +48,12 @@ sub post_edit {
 sub history {
     my ($class, $entry_id) = @_;
 
-    my $entry = model('DB')->single(entry => {entry_id => $entry_id}) or res_404();
+    my $entry = db->single(entry => {entry_id => $entry_id}) or res_404();
 
     my $page = param('page') || 1;
     my $rows_per_page = 20;
 
-    my @histories = model('DB')->search(
+    my @histories = db->search(
         'entry_history' => { entry_id => $entry_id },
         {
             order_by => {'entry_history_id' => 'DESC'},
@@ -69,7 +69,7 @@ sub history {
 
 sub reply {
     my ($class, $entry_id) = @_;
-    my $entry = model('DB')->single(entry => {entry_id => $entry_id}) or res_404();
+    my $entry = db->single(entry => {entry_id => $entry_id}) or res_404();
     my $quote  = ">>$entry_id\n\n";
        $quote .= join "\n", map { "> $_" } split /(?:\r\n|\r|\n)/, $entry->body;
     render('reply.mt', $entry, $quote);

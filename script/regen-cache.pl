@@ -15,7 +15,7 @@ GetOptions(
 
 my $config = do $conffile or die $@;
 my $c = Inamode13->bootstrap(config => $config);
-my $entry_iter = $c->model('DB')->search('entry');
+my $entry_iter = $c->db->search('entry');
 while (my $entry = $entry_iter->next) {
     model('Entry')->set_cache($entry);
 }

@@ -3,8 +3,8 @@ use Amon::Web::Dispatcher;
 use feature 'switch';
 
 sub dispatch {
-    my ($class, $req) = @_;
-    given ([$req->method, $req->path_info]) {
+    my ($class, $c) = @_;
+    given ([$c->request->method, $c->request->path_info]) {
         when (['GET', '/']) {
             return call("Root", 'index');
         }

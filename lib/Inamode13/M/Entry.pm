@@ -15,9 +15,9 @@ sub _addr {
 sub insert {
     my ($self, $body, $address) = @_;
 
-    my $txn = model('DB')->txn_scope;
+    my $txn = db->txn_scope;
 
-    my $entry = model('DB')->insert(
+    my $entry = db->insert(
         entry => {
             body        => $body,
             remote_addr => _addr($address),
@@ -34,9 +34,9 @@ sub insert {
 sub update {
     my ($self, $entry, $body, $addr) = @_;
     if ($body ne $entry->body) {
-        my $txn = model('DB')->txn_scope;
+        my $txn = db->txn_scope;
 
-        model('DB')->insert(
+        db->insert(
             entry_history => {
                 entry_id    => $entry->entry_id,
                 body        => $entry->body,
@@ -72,7 +72,7 @@ sub set_cache {
     });
 
     for my $rel_entry_id ($body =~ />>(\d+)/g) {
-        my $rel_entry = model('DB')->single(entry => {entry_id => $rel_entry_id});
+        my $rel_entry = db->single(entry => {entry_id => $rel_entry_id});
         my $anchor_ref = do {
             my @ids = split /,/, ($rel_entry->anchor_ref || '');
             push @ids, $entry->entry_id;
