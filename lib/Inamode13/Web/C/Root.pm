@@ -27,9 +27,9 @@ sub rss {
             limit    => 20,
         }
     );
-    my $body = view('MT')->render('rss.mt', \@entries);
-    utf8::encode($body);
-    return [200, ['Content-Length' => length($body), 'Content-Type' => 'application/rss+xml'], [$body]]
+    view('MT')
+      ->make_response( 'rss.mt', \@entries )
+      ->content_type('application/rss+xml');
 }
 
 1;
