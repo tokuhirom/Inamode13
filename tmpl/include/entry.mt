@@ -6,7 +6,6 @@
     <div class="entry-content"><?= $entry->html ?></div>
     <div class="clear-both">&nbsp;</div>
     <div class="entry-footer">
-        <div class="star-container"></div>
 ? if ($entry->anchor_ref) {
         <div class="entry-rel">
             Rel:
