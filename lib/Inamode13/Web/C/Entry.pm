@@ -4,6 +4,21 @@ use Encode;
 
 sub post {
     if (my $body = param_decoded('body')) {
+        # spam check
+        my $req = req();
+        my $is_spam = c->get('Akismet')->check(
+            USER_IP            => $req->address,
+            COMMENT_USER_AGENT => $req->user_agent,
+            COMMENT_CONTENT    => $body,
+            REFERRER           => $req->referer,
+        ) or die "Cannot check by akismet";
+        if ($is_spam eq 'true') {
+            return render(
+                'akismet.mt'
+            )->fillin_form(req)->status(403);
+        }
+
+        # insert
         my $entry = model('Entry')->insert(
             $body, req->address(),
         );

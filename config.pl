@@ -11,4 +11,7 @@
     'V::MT' => {
         cache_mode => 2,
     },
+    'Akismet' => {
+        KEY => 'c3bb13eda935',
+    },
 };
