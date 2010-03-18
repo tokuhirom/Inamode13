@@ -5,7 +5,7 @@ use Router::Simple::Declare;
 my $router = router {
     connect '/',          {controller => 'Root',  action => 'index'};
     connect '/entry',     {controller => 'Entry', action => 'post'};
-    submapper(path_prefix => '/entry/{id:[0-9]+}', controller => 'Entry')
+    submapper('/entry/{id:[0-9]+}', controller => 'Entry')
         ->connect('',         {action => 'show'})
         ->connect('/edit',    {action => 'edit'})
         ->connect('/history', {action => 'history'})
