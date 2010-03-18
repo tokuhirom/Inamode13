@@ -7,7 +7,7 @@ create table entry (
     revision integer unsigned not null default 1,
     remote_addr integer unsigned not null,
     anchor_ref text default ''
-) engine="innodb";
+) engine="innodb" charset=UTF8;
 
 create table entry_history (
     entry_history_id integer primary key auto_increment,
@@ -16,5 +16,5 @@ create table entry_history (
     ctime integer not null,
     revision integer not null,
     remote_addr integer unsigned not null
-) engine="innodb";
+) engine="innodb" charset=UTF8;
 
