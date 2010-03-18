@@ -36,7 +36,7 @@ sub show {
     render('show.mt', $entry);
 }
 
-sub edit_form {
+sub edit {
     my ($class, $entry_id) = @_;
     my $entry = db->single('entry', { entry_id => $entry_id });
     return redirect('/') unless $entry;

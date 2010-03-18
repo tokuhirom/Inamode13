@@ -1,37 +1,26 @@
 package Inamode13::Web::Dispatcher;
 use Amon::Web::Dispatcher;
-use feature 'switch';
+use Router::Simple::Declare;
+
+my $router = router {
+    connect '/',          {controller => 'Root',  action => 'index'};
+    connect '/entry',     {controller => 'Entry', action => 'post'};
+    submapper(path_prefix => '/entry/{id:[0-9]+}', controller => 'Entry')
+        ->connect('',         {action => 'show'})
+        ->connect('/edit',    {action => 'edit'})
+        ->connect('/history', {action => 'history'})
+        ->connect('/reply',   {action => 'reply'});
+    connect '/index.rss', {controller => 'Root',  action => 'rss'};
+};
 
 sub dispatch {
     my ($class, $c) = @_;
-    given ([$c->request->method, $c->request->path_info]) {
-        when (['GET', '/']) {
-            return call("Root", 'index');
-        }
-        when (['POST', '/entry']) {
-            return call('Entry', 'post');
-        }
-        when (['GET', qr{^/entry/(\d+)$}]) {
-            return call('Entry', 'show', $1);
-        }
-        when (['GET', qr{^/entry/(\d+)/edit$}]) {
-            return call('Entry', 'edit_form', $1);
-        }
-        when (['POST', qr{^/entry/(\d+)/edit$}]) {
-            return call('Entry', 'post_edit', $1);
-        }
-        when (['GET', qr{^/entry/(\d+)/history$}]) {
-            return call('Entry', 'history', $1);
-        }
-        when (['GET', qr{^/entry/(\d+)/reply$}]) {
-            return call('Entry', 'reply', $1);
-        }
-        when (['GET', '/index.rss']) {
-            return call('Root', 'rss');
-        }
-        default {
-            return res_404();
-        }
+    my $req = $c->request;
+    if (my $p = $router->match($req)) {
+        my $action = $req->method eq 'POST' ? "post_$p->{action}" : $p->{action};
+        call($p->{controller}, $action, $p->{args}->{id});
+    } else {
+        res_404();
     }
 }
 
