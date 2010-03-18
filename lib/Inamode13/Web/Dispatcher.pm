@@ -4,7 +4,7 @@ use Router::Simple::Declare;
 
 my $router = router {
     connect '/',          {controller => 'Root',  action => 'index'};
-    connect '/entry',     {controller => 'Entry', action => 'post'};
+    connect '/entry',     {controller => 'Entry', action => 'add'};
     submapper('/entry/{id:[0-9]+}', controller => 'Entry')
         ->connect('',         {action => 'show'})
         ->connect('/edit',    {action => 'edit'})

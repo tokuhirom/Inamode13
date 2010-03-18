@@ -2,7 +2,7 @@ package Inamode13::Web::C::Entry;
 use Amon::Web::C;
 use Encode;
 
-sub post {
+sub post_add {
     if (my $body = param_decoded('body')) {
         # spam check
         my $req = req();
