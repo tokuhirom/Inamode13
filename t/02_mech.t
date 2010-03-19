@@ -8,7 +8,17 @@ use t::Utils;
 
 my $app = setup_webapp();
 
+{
+    no warnings 'redefine';
+    *Net::Akismet::new = sub {
+        Plack::Util::inline_object(
+            check => sub { 'false' }
+        );
+    };
+}
+
 my $mech = Test::WWW::Mechanize::PSGI->new(app => $app);
+$mech->max_redirect(0);
 $mech->get_ok('/');
 $mech->followable_links();
 $mech->submit_form(
