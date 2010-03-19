@@ -29,23 +29,22 @@ sub post_add {
 }
 
 sub show {
-    my ($class, $entry_id) = @_;
-    my $entry = db->single('entry', { entry_id => $entry_id });
+    my $entry = db->single('entry', { entry_id => args->{entry_id} });
     return res_404() unless $entry;
 
     render('show.mt', $entry);
 }
 
 sub edit {
-    my ($class, $entry_id) = @_;
-    my $entry = db->single('entry', { entry_id => $entry_id });
+    my $entry = db->single('entry', { entry_id => args->{entry_id} });
     return redirect('/') unless $entry;
 
     render('edit.mt', $entry);
 }
 
 sub post_edit {
-    my ($class, $entry_id) = @_;
+    my $entry_id = args->{entry_id};
+
     my $entry = db->single('entry', { entry_id => $entry_id });
     return redirect('/') unless $entry;
     my $body = param_decoded('body');
@@ -72,7 +71,7 @@ sub post_edit {
 }
 
 sub history {
-    my ($class, $entry_id) = @_;
+    my $entry_id = args->{entry_id};
 
     my $entry = db->single(entry => {entry_id => $entry_id}) or res_404();
 
@@ -94,7 +93,7 @@ sub history {
 }
 
 sub reply {
-    my ($class, $entry_id) = @_;
+    my $entry_id = args->{entry_id};
     my $entry = db->single(entry => {entry_id => $entry_id}) or res_404();
     my $quote  = ">>$entry_id\n\n";
        $quote .= join "\n", map { "> $_" } split /(?:\r\n|\r|\n)/, $entry->body;
