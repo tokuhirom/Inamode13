@@ -16,7 +16,7 @@ my $router = router {
 sub dispatch {
     my ($class, $c) = @_;
     my $req = $c->request;
-    if (my $p = $router->match($req)) {
+    if (my $p = $router->match($req->env)) {
         my $action = $req->method eq 'POST' ? "post_$p->{action}" : $p->{action};
         call($p->{controller}, $action, $p->{args}->{id});
     } else {
