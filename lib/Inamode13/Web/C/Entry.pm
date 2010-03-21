@@ -95,6 +95,8 @@ sub history {
 sub reply {
     my $entry_id = args->{entry_id};
     my $entry = db->single(entry => {entry_id => $entry_id}) or res_404();
+    return res_404() unless $entry;
+
     my $quote  = ">>$entry_id\n\n";
        $quote .= join "\n", map { "> $_" } split /(?:\r\n|\r|\n)/, $entry->body;
     render('reply.mt', $entry, $quote);
