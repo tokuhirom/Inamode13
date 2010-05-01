@@ -23,7 +23,7 @@
         </div>
         <div class="footer">
             <p>Copyright (C) 2009 64p.org All rights reserved.</p>
-            <p>Powered by <a href="http://perl.org/">Perl</a>, <a href="http://github.com/tokuhirom/Amon/">Amon</a></p>
+            <p>Powered by <a href="http://perl.org/">Perl <?= $] ?></a>, <a href="http://github.com/tokuhirom/Amon/">Amon</a></p>
             <p>
                 <a href="http://validator.w3.org/check?uri=referer"><img
                     src="http://www.w3.org/Icons/valid-xhtml10-blue"
