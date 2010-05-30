@@ -1,84 +1,95 @@
 package Inamode13::Web::C::Entry;
-use Amon::Web::C;
+use strict;
+use warnings;
 use Encode;
 
 sub post_add {
-    if (my $body = param_decoded('body')) {
+    my ($class, $c) = @_;
+
+    my $req = $c->req;
+    if (my $body = $req->param_decoded('body')) {
         # spam check
-        my $req = req();
-        my $is_spam = c->get('Akismet')->check(
+        my $is_spam = $c->get('Akismet')->check(
             USER_IP            => $req->address,
             COMMENT_USER_AGENT => $req->user_agent,
             COMMENT_CONTENT    => $body,
             REFERRER           => $req->referer,
         ) or die "Cannot check by akismet";
         if ($is_spam eq 'true') {
-            return render(
+            return $c->render(
                 'akismet.mt'
-            )->fillin_form(req)->status(403);
+            )->fillin_form($req)->status(403);
         }
 
         # insert
-        my $entry = model('Entry')->insert(
-            $body, req->address(),
+        my $entry = $c->model('Entry')->insert(
+            $body, $req->address(),
         );
-        redirect("/entry/@{[ $entry->entry_id ]}");
+        $c->redirect("/entry/@{[ $entry->entry_id ]}");
     } else {
-        redirect('/');
+        $c->redirect('/');
     }
 }
 
 sub show {
-    my $entry = db->single('entry', { entry_id => args->{entry_id} });
-    return res_404() unless $entry;
+    my ($class, $c) = @_;
 
-    render('show.mt', $entry);
+    my $entry = $c->db->single('entry', { entry_id => $c->args->{entry_id} });
+    return $c->res_404() unless $entry;
+
+    $c->render('show.mt', $entry);
 }
 
 sub edit {
-    my $entry = db->single('entry', { entry_id => args->{entry_id} });
-    return redirect('/') unless $entry;
+    my ($class, $c) = @_;
 
-    render('edit.mt', $entry);
+    my $entry = $c->db->single('entry', { entry_id => $c->args->{entry_id} });
+    return $c->redirect('/') unless $entry;
+
+    $c->render('edit.mt', $entry);
 }
 
 sub post_edit {
-    my $entry_id = args->{entry_id};
+    my ($class, $c) = @_;
 
-    my $entry = db->single('entry', { entry_id => $entry_id });
-    return redirect('/') unless $entry;
-    my $body = param_decoded('body');
-    return redirect('/') unless $body;
+    my $entry_id = $c->args->{entry_id};
 
-    my $req = req();
-    my $is_spam = c->get('Akismet')->check(
+    my $entry = $c->db->single('entry', { entry_id => $entry_id });
+    return $c->redirect('/') unless $entry;
+    my $body = $c->req->param_decoded('body');
+    return $c->redirect('/') unless $body;
+
+    my $req = $c->req();
+    my $is_spam = $c->get('Akismet')->check(
         USER_IP            => $req->address,
         COMMENT_USER_AGENT => $req->user_agent,
         COMMENT_CONTENT    => $body,
         REFERRER           => $req->referer,
     ) or die "Cannot check by akismet";
     if ($is_spam eq 'true') {
-        return render(
+        return $c->render(
             'akismet.mt'
-        )->fillin_form(req)->status(403);
+        )->fillin_form($req)->status(403);
     }
 
-    model('Entry')->update(
-        $entry, $body, req->address(),
+    $c->model('Entry')->update(
+        $entry, $body, $c->req->address(),
     );
 
-    redirect("/entry/@{[ $entry_id ]}");
+    $c->redirect("/entry/@{[ $entry_id ]}");
 }
 
 sub history {
-    my $entry_id = args->{entry_id};
+    my ($class, $c) = @_;
 
-    my $entry = db->single(entry => {entry_id => $entry_id}) or res_404();
+    my $entry_id = $c->args->{entry_id};
 
-    my $page = param('page') || 1;
+    my $entry = $c->db->single(entry => {entry_id => $entry_id}) or $c->res_404();
+
+    my $page = $c->req->param('page') || 1;
     my $rows_per_page = 20;
 
-    my @histories = db->search(
+    my @histories = $c->db->search(
         'entry_history' => { entry_id => $entry_id },
         {
             order_by => {'entry_history_id' => 'DESC'},
@@ -89,17 +100,19 @@ sub history {
     my $has_next =  ($rows_per_page+1 == @histories);
     if ($has_next) { pop @histories }
 
-    render("history.mt", $entry, \@histories, $page, $has_next);
+    $c->render("history.mt", $entry, \@histories, $page, $has_next);
 }
 
 sub reply {
-    my $entry_id = args->{entry_id};
-    my $entry = db->single(entry => {entry_id => $entry_id}) or res_404();
-    return res_404() unless $entry;
+    my ($class, $c) = @_;
+
+    my $entry_id = $c->args->{entry_id};
+    my $entry = $c->db->single(entry => {entry_id => $entry_id}) or $c->res_404();
+    return $c->res_404() unless $entry;
 
     my $quote  = ">>$entry_id\n\n";
        $quote .= join "\n", map { "> $_" } split /(?:\r\n|\r|\n)/, $entry->body;
-    render('reply.mt', $entry, $quote);
+    $c->render('reply.mt', $entry, $quote);
 }
 
 1;
