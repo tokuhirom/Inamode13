@@ -1,8 +1,8 @@
 package Amon::Web;
 use strict;
 use warnings;
-use Module::Pluggable::Object;
 use Amon::Util;
+use Amon::Util::Loader;
 use Amon::Trigger;
 use Amon::Container;
 
@@ -15,10 +15,8 @@ sub import {
         strict->import;
         warnings->import;
 
-        # load classes
-        Module::Pluggable::Object->new(
-            'require' => 1, search_path => "${caller}::C"
-        )->plugins;
+        # load controller classes
+        Amon::Util::Loader::load_all("${caller}::C");
 
         my $dispatcher_class = $args{dispatcher_class} || "${caller}::Dispatcher";
         load_class($dispatcher_class);
@@ -41,7 +39,7 @@ sub import {
         add_method($caller, 'response_class', sub { $response_class });
 
         my $default_view_class = $args{default_view_class} or die "missing configuration: default_view_class";
-        load_class($default_view_class, "${base_name}::V");
+        Amon::Util::load_class($default_view_class, "${base_name}::V");
         add_method($caller, 'default_view_class', sub { $default_view_class });
 
         no strict 'refs';
@@ -53,14 +51,34 @@ sub import {
 sub html_content_type { 'text/html; charset=UTF-8' }
 sub encoding          { 'utf-8' }
 sub request           { $_[0]->{request} }
+sub req               { $_[0]->{request} }
 sub pnotes            { $_[0]->{pnotes}  }
 sub args              { $_[0]->{args}    }
+
+sub redirect {
+    my ($self, $location) = @_;
+    my $url = do {
+        if ($location =~ m{^https?://}) {
+            $location;
+        } else {
+            my $url = $self->request->base;
+            $url =~ s!/+$!!;
+            $location =~ s!^/+([^/])!/$1!;
+            $url .= $location;
+        }
+    };
+    $self->response_class->new(
+        302,
+        ['Location' => $url],
+        []
+    );
+}
 
 sub to_app {
     my ($class, %args) = @_;
 
     my $self = $class->new(
-        config   => $args{config},
+         ($args{config} ? (config   => $args{config}) : ()),
     );
     return sub { $self->run(shift) };
 }
@@ -84,6 +102,58 @@ sub run {
     }
     $self->call_trigger('AFTER_DISPATCH' => $response);
     return $response->finalize;
+}
+
+sub uri_for {
+    my ($self, $path, $query) = @_;
+    my $root = $self->req->{env}->{SCRIPT_NAME} || '/';
+    $root =~ s{([^/])$}{$1/};
+    $path =~ s{^/}{};
+
+    my @q;
+    while (my ($key, $val) = each %$query) {
+        $val = join '', map { /^[a-zA-Z0-9_.!~*'()-]$/ ? $_ : '%' . uc(unpack('H2', $_)) } split //, $val;
+        push @q, "${key}=${val}";
+    }
+    $root . $path . (scalar @q ? '?' . join('&', @q) : '');
+}
+
+sub render {
+    return shift->view()->make_response(@_);
+}
+
+sub render_partial {
+    return shift->view()->render(@_);
+}
+
+sub view {
+    my $self = shift;
+    my $name = @_ == 1 ? $_[0] : $self->default_view_class;
+       $name = "V::$name";
+    my $klass = "@{[ $self->base_name ]}::$name";
+    $self->{components}->{$klass} ||= do {
+        Amon::Util::load_class($klass);
+        my $config = $self->config()->{$name} || +{};
+        $klass->new($self, $config);
+    };
+}
+
+
+# -------------------------------------------------------------------------
+# pluggable things
+
+sub load_plugins {
+    my ($class, @args) = @_;
+    for (my $i=0; $i<@args; $i+=2) {
+        my ($module, $conf) = ($args[$i], $args[$i+1]);
+        $class->load_plugin($module, $conf);
+    }
+}
+
+sub load_plugin {
+    my ($class, $module, $conf) = @_;
+    $module = Amon::Util::load_class($module, 'Amon::Plugin');
+    $module->init($class, $conf);
 }
 
 1;

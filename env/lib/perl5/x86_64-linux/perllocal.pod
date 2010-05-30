@@ -20,3 +20,25 @@ C<EXE_FILES: script/amon-setup.pl>
 
 =back
 
+=head2 Sun May 30 22:49:14 2010: C<Module> L<Amon|Amon>
+
+=over 4
+
+=item *
+
+C<installed into: /home/tokuhirom/dev/Inamode13/env/lib/perl5>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.42>
+
+=item *
+
+C<EXE_FILES: script/amon-setup.pl>
+
+=back
+
